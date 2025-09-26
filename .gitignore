@@ -1,0 +1,49 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.eggs/
+*.egg-info/
+build/
+dist/
+pip-wheel-metadata/
+
+# --- Environnements virtuels ---
+.venv/
+venv/
+ENV/
+env/
+
+# --- Tests & couverture ---
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Éditeurs/IDE ---
+.vscode/
+.idea/
+*.code-workspace
+
+# --- OS (Windows/macOS) ---
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- Logs & temporaires ---
+*.log
+*.tmp
+.cache/
+
+# --- Secrets & clés (ne jamais committer) ---
+.env
+.env.*
+*.pem
+*.key
+id_rsa
+id_ecdsa
+id_ed25519
+*.vault-password
+.python-version
