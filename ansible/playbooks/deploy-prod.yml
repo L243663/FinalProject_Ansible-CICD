@@ -1,0 +1,61 @@
+---
+- name: Deploiement PROD (simple)
+  hosts: prod
+  become: true
+
+  vars:
+    repo_url: "https://github.com/L243663/FinalProject_Ansible-CICD.git"
+    repo_branch: "main"
+    app_dir: "/opt/app"
+    index_msg: "✅ Déploiement PROD réussi"
+
+  tasks:
+    - name: Installer dependances
+      apt:
+        name: [git, nginx, nodejs, npm, python3-pip]
+        state: present
+        update_cache: true
+
+    - name: Créer le dossier de l'application
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: ansible
+        group: ansible
+        mode: "0755"
+
+    - name: Cloner le dépôt (branche PROD)
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ repo_branch }}"
+        force: yes
+
+    - name: Installer requirements Python si présents
+      pip:
+        requirements: "{{ app_dir }}/application/requirements.txt"
+        executable: pip3
+      ignore_errors: true
+
+    - name: Étape build (placeholder)
+      shell: echo "Build PROD OK - \$(date)" > {{ app_dir }}/BUILD_OK.txt
+
+    - name: Page de confirmation via Nginx
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <h1>{{ index_msg }}</h1>
+          <p>Repo: {{ repo_url }} ({{ repo_branch }})</p>
+          <p>Date: {{ ansible_date_time.iso8601 }}</p>
+
+    - name: Activer et démarrer Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Log de déploiement
+      lineinfile:
+        path: /var/log/deploy.log
+        line: "{{ ansible_date_time.iso8601 }} - PROD déployé ({{ repo_branch }})"
+        create: true
